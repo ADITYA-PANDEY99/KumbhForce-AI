@@ -1,0 +1,32 @@
+# Local virtual environments
+venv/
+.venv/
+ENV/
+env/
+
+# Node dependencies
+node_modules/
+npm-debug.log*
+
+# Next.js build outputs
+.next/
+out/
+build/
+dist/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS files
+.DS_Store
+Thumbs.db
