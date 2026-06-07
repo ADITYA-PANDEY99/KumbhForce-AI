@@ -1,0 +1,334 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   KUMBHFORCE AI — DESIGN TOKEN SYSTEM
+   Premium Command Center Visual Framework
+   ============================================================ */
+
+@layer base {
+
+  /* ==========================================
+     THEME 1: COMMAND AURORA (Default)
+     Dark teal + deep violet enterprise tech
+     ========================================== */
+  :root {
+    --background: 222 47% 5%;
+    --background-secondary: 222 47% 7%;
+    --background-elevated: 222 40% 9%;
+    --foreground: 210 40% 96%;
+    --foreground-muted: 215 25% 55%;
+    --foreground-subtle: 215 20% 35%;
+
+    --card: 222 40% 8%;
+    --card-hover: 222 40% 10%;
+    --card-glow: rgba(0, 212, 255, 0.12);
+    --card-glow-intense: rgba(0, 212, 255, 0.25);
+
+    --border: 220 30% 14%;
+    --border-active: 191 100% 50%;
+    --border-subtle: 220 30% 11%;
+
+    --primary: 191 100% 50%;        /* Aurora Teal  #00d4ff */
+    --primary-dim: 191 100% 35%;
+    --primary-glow: rgba(0, 212, 255, 0.35);
+
+    --accent: 263 70% 60%;          /* Deep Violet  */
+    --accent-glow: rgba(139, 92, 246, 0.3);
+
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --danger: 0 84% 60%;
+    --info: 199 89% 55%;
+
+    --sidebar-width: 256px;
+    --sidebar-collapsed-width: 68px;
+    --header-height: 64px;
+    --statusbar-height: 36px;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --shadow-elevated: 0 8px 40px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 20px var(--card-glow);
+    --shadow-glow-intense: 0 0 40px var(--card-glow-intense);
+  }
+
+  /* ==========================================
+     THEME 2: KUMBH SUNRISE
+     Saffron orange + marigold warm command
+     ========================================== */
+  .theme-kumbh-sunrise {
+    --background: 20 60% 5%;
+    --background-secondary: 20 60% 7%;
+    --background-elevated: 20 55% 9%;
+    --foreground: 40 90% 95%;
+    --foreground-muted: 30 40% 55%;
+    --foreground-subtle: 30 30% 38%;
+
+    --card: 20 55% 8%;
+    --card-hover: 20 55% 11%;
+    --card-glow: rgba(249, 115, 22, 0.15);
+    --card-glow-intense: rgba(249, 115, 22, 0.3);
+
+    --border: 20 40% 14%;
+    --border-active: 28 100% 50%;
+    --border-subtle: 20 40% 11%;
+
+    --primary: 28 100% 55%;         /* Saffron #ff7c1f */
+    --primary-dim: 28 80% 38%;
+    --primary-glow: rgba(255, 124, 31, 0.35);
+
+    --accent: 45 93% 52%;           /* Marigold */
+    --accent-glow: rgba(234, 179, 8, 0.3);
+
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --danger: 0 84% 60%;
+    --info: 199 89% 55%;
+
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45);
+    --shadow-elevated: 0 8px 40px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 20px var(--card-glow);
+    --shadow-glow-intense: 0 0 40px var(--card-glow-intense);
+  }
+
+  /* ==========================================
+     THEME 3: NEON COMMAND
+     High-contrast cyberpunk pink + cyan
+     ========================================== */
+  .theme-neon-command {
+    --background: 262 80% 3%;
+    --background-secondary: 262 80% 5%;
+    --background-elevated: 262 70% 7%;
+    --foreground: 180 100% 92%;
+    --foreground-muted: 270 30% 60%;
+    --foreground-subtle: 270 25% 40%;
+
+    --card: 262 70% 6%;
+    --card-hover: 262 70% 9%;
+    --card-glow: rgba(236, 72, 153, 0.2);
+    --card-glow-intense: rgba(236, 72, 153, 0.38);
+
+    --border: 262 50% 16%;
+    --border-active: 320 100% 60%;
+    --border-subtle: 262 50% 12%;
+
+    --primary: 320 100% 60%;        /* Hot Pink */
+    --primary-dim: 320 80% 40%;
+    --primary-glow: rgba(236, 72, 153, 0.45);
+
+    --accent: 180 100% 55%;         /* Neon Cyan */
+    --accent-glow: rgba(0, 255, 255, 0.3);
+
+    --success: 142 71% 50%;
+    --warning: 38 100% 55%;
+    --danger: 0 90% 65%;
+    --info: 199 100% 60%;
+
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5);
+    --shadow-elevated: 0 8px 40px rgba(0, 0, 0, 0.7);
+    --shadow-glow: 0 0 20px var(--card-glow);
+    --shadow-glow-intense: 0 0 45px var(--card-glow-intense);
+  }
+
+  /* ==========================================
+     THEME 4: EXECUTIVE LIGHT
+     Sleek professional white + precision blue
+     ========================================== */
+  .theme-executive-light {
+    --background: 210 25% 97%;
+    --background-secondary: 210 20% 94%;
+    --background-elevated: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --foreground-muted: 215 20% 45%;
+    --foreground-subtle: 215 15% 65%;
+
+    --card: 0 0% 100%;
+    --card-hover: 210 25% 97%;
+    --card-glow: rgba(59, 130, 246, 0.08);
+    --card-glow-intense: rgba(59, 130, 246, 0.15);
+
+    --border: 214 32% 88%;
+    --border-active: 221 83% 53%;
+    --border-subtle: 214 32% 92%;
+
+    --primary: 221 83% 53%;         /* Precision Blue */
+    --primary-dim: 221 60% 40%;
+    --primary-glow: rgba(59, 130, 246, 0.25);
+
+    --accent: 250 80% 60%;          /* Royal Indigo */
+    --accent-glow: rgba(99, 102, 241, 0.2);
+
+    --success: 142 71% 40%;
+    --warning: 38 92% 45%;
+    --danger: 0 72% 50%;
+    --info: 199 89% 45%;
+
+    --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.07);
+    --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --shadow-glow: 0 0 20px var(--card-glow);
+    --shadow-glow-intense: 0 0 32px var(--card-glow-intense);
+  }
+}
+
+/* ============================================================
+   UTILITY CLASSES — GLOW, TRANSITION, & ANIMATION SYSTEM
+   ============================================================ */
+
+@layer utilities {
+
+  /* Card hover intelligence — elevate + glow + border highlight */
+  .card-interactive {
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+    transition: transform var(--transition-base),
+                box-shadow var(--transition-base),
+                border-color var(--transition-base),
+                background var(--transition-base);
+  }
+  .card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow), var(--shadow-card);
+    border-color: hsl(var(--border-active) / 0.5);
+    background: hsl(var(--card-hover));
+  }
+  .card-interactive:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 3px;
+  }
+
+  /* Glow text effect for primary values */
+  .text-glow {
+    text-shadow: 0 0 16px hsl(var(--primary) / 0.7);
+  }
+
+  /* Danger / warning glow for alerts */
+  .glow-danger {
+    box-shadow: 0 0 16px hsl(var(--danger) / 0.3);
+    border-color: hsl(var(--danger) / 0.5) !important;
+  }
+  .glow-success {
+    box-shadow: 0 0 16px hsl(var(--success) / 0.3);
+    border-color: hsl(var(--success) / 0.5) !important;
+  }
+  .glow-warning {
+    box-shadow: 0 0 16px hsl(var(--warning) / 0.3);
+    border-color: hsl(var(--warning) / 0.5) !important;
+  }
+
+  /* Subtle shimmer gradient sweep animation */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--card)) 25%,
+      hsl(var(--card-hover)) 50%,
+      hsl(var(--card)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite;
+  }
+
+  /* Status dot pulse */
+  .status-live {
+    position: relative;
+  }
+  .status-live::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: hsl(var(--success) / 0.3);
+    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* Sidebar glow on active link */
+  .nav-active {
+    background: hsl(var(--primary) / 0.15);
+    border-left: 2px solid hsl(var(--primary));
+    color: hsl(var(--primary));
+  }
+
+  /* Scan line overlay for mission control aesthetic */
+  .scanline-overlay {
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      hsl(var(--primary) / 0.02) 2px,
+      hsl(var(--primary) / 0.02) 4px
+    );
+    pointer-events: none;
+  }
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes ping {
+  0%   { transform: scale(1); opacity: 0.8; }
+  80%  { transform: scale(1.8); opacity: 0; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 12px hsl(var(--primary) / 0.2); }
+  50%       { box-shadow: 0 0 28px hsl(var(--primary) / 0.5); }
+}
+
+@keyframes slide-in-left {
+  from { transform: translateX(-16px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fade-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ============================================================
+   TYPOGRAPHY SYSTEM
+   ============================================================ */
+
+@layer base {
+  body {
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* Scrollbar styling for command center feel */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: hsl(var(--background)); }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--foreground-subtle));
+  }
+
+  /* Focus ring system */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
