@@ -110,10 +110,18 @@ function SectionHeader({ title, subtitle, action }: { title: string; subtitle?: 
   );
 }
 
+import { fetchDashboardSummary, fetchLiveEvents, DashboardSummary, LiveEvent } from "@/lib/api";
+
 export function CommandCenterDashboard() {
   const [selectedSectorId, setSelectedSectorId] = useState<string | null>(null);
   const [isCtaModalOpen, setIsCtaModalOpen] = useState(false);
   const [autoResolveSuccess, setAutoResolveSuccess] = useState(false);
+
+  // Central API integration states
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [isFallback, setIsFallback] = useState(false);
+  const [dashboardSummary, setDashboardSummary] = useState<DashboardSummary | null>(null);
 
   // Demo Mode and Live Operations Feed states
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -123,6 +131,39 @@ export function CommandCenterDashboard() {
   const [readinessScore, setReadinessScore] = useState(87);
 
   const currentExplain = selectedSectorId ? explainabilityMap[selectedSectorId] || defaultExplainability : defaultExplainability;
+
+  const loadData = async () => {
+    setIsLoading(true);
+    setIsError(false);
+    try {
+      const summaryResult = await fetchDashboardSummary();
+      const eventsResult = await fetchLiveEvents();
+      
+      setDashboardSummary(summaryResult.data);
+      setActiveVolunteers(summaryResult.data.activeVolunteers);
+      setReadinessScore(summaryResult.data.readinessScore);
+      
+      // Map live events to FeedEvent structure
+      const mappedEvents: FeedEvent[] = eventsResult.data.map((e: any) => ({
+        id: e.id,
+        timestamp: e.timestamp,
+        category: e.category,
+        message: e.message,
+        highlighted: e.severity === "Critical"
+      }));
+      setFeedEvents(mappedEvents);
+      setIsFallback(summaryResult.isFallback || eventsResult.isFallback);
+    } catch (err) {
+      setIsError(true);
+      setIsFallback(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   // Real-time Event Dispatch Feed Interval
   useEffect(() => {
@@ -161,8 +202,13 @@ export function CommandCenterDashboard() {
       setReadinessScore(89);
       setActiveVolunteers(495);
     } else {
-      setReadinessScore(87);
-      setActiveVolunteers(487);
+      if (dashboardSummary) {
+        setReadinessScore(dashboardSummary.readinessScore);
+        setActiveVolunteers(dashboardSummary.activeVolunteers);
+      } else {
+        setReadinessScore(87);
+        setActiveVolunteers(487);
+      }
     }
   };
 
@@ -183,6 +229,34 @@ export function CommandCenterDashboard() {
     if (feedFilter === "ALL") return true;
     return ev.category.toUpperCase() === feedFilter.toUpperCase();
   });
+
+  if (isLoading) {
+    return (
+      <div className="p-6 space-y-8 max-w-[1600px] mx-auto animate-pulse">
+        {/* Skeleton Header */}
+        <div className="flex justify-between items-center gap-4">
+          <div className="space-y-2">
+            <div className="h-6 bg-border/60 rounded w-48" />
+            <div className="h-4 bg-border/60 rounded w-96" />
+          </div>
+          <div className="h-10 bg-border/60 rounded w-48" />
+        </div>
+        
+        {/* Skeleton KPIs */}
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-24 bg-card border border-border/50 rounded-lg animate-pulse" />
+          ))}
+        </div>
+        
+        {/* Skeleton Content */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          <div className="xl:col-span-8 h-96 bg-card border border-border/50 rounded-lg animate-pulse" />
+          <div className="xl:col-span-4 h-96 bg-card border border-border/50 rounded-lg animate-pulse" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`p-6 space-y-8 max-w-[1600px] mx-auto transition-all ${
@@ -207,6 +281,19 @@ export function CommandCenterDashboard() {
         
         {/* Dynamic Presentation Demo Mode Controls */}
         <div className="flex items-center gap-3">
+          {isFallback ? (
+            <button
+              onClick={loadData}
+              className="px-3 py-2 bg-warning/20 border border-warning/40 hover:bg-warning/30 rounded-lg text-xs font-mono font-bold text-warning flex items-center gap-1.5 cursor-pointer shrink-0"
+            >
+              ⚠️ Offline Fallback · Retry Connection
+            </button>
+          ) : (
+            <div className="px-3 py-2 bg-success/10 border border-success/30 rounded-lg text-xs font-mono font-bold text-success shrink-0">
+              🟢 Connected to Live Backend
+            </div>
+          )}
+
           <button
             onClick={toggleDemoMode}
             className={`px-4 py-2 rounded-lg font-bold text-xs tracking-wider transition-all border flex items-center gap-2 cursor-pointer ${
@@ -234,7 +321,7 @@ export function CommandCenterDashboard() {
           <MetricCard label="Readiness Score" value={readinessScore.toString()} unit="/ 100" delta={isDemoMode ? 1.8 : 2.4} deltaLabel="live tracking" icon={Activity} tooltip="Composite readiness status across Mahakumbh grid" />
           <MetricCard label="Active Volunteers" value={activeVolunteers.toString()} unit="on duty" delta={isDemoMode ? 8 : 12} deltaLabel="active coverage" icon={Users} tooltip="Current staff logged into active stations" />
           <MetricCard label="Active Sectors" value="12" unit="/ 12" delta={0} deltaLabel="operational" icon={Shield} tooltip="Total sectors mapped in command grid" />
-          <MetricCard label="Critical Incidents" value={isDemoMode ? "2" : "4"} unit="active" delta={-33} deltaLabel="resolved today" icon={AlertTriangle} tooltip="Unresolved high priority dispatch tasks" />
+          <MetricCard label="Critical Incidents" value={dashboardSummary ? dashboardSummary.activeIncidents.toString() : (isDemoMode ? "2" : "4")} unit="active" delta={-33} deltaLabel="resolved today" icon={AlertTriangle} tooltip="Unresolved high priority dispatch tasks" />
           <MetricCard label="AI Recommendations" value="87" unit="generated" delta={14} deltaLabel="auto-applied" icon={Brain} tooltip="Machine learning interventions generated in last 24h" />
           <MetricCard label="Workforce Efficiency" value="92" unit="%" delta={1.8} deltaLabel="vs average" icon={CheckCircle} tooltip="Deployment efficiency score based on optimal routing and skills match" />
         </div>
@@ -286,6 +373,10 @@ export function CommandCenterDashboard() {
                 <div className="flex justify-between text-[11px] text-foreground-subtle border-b border-border/40 pb-1">
                   <span>Current Critical Gaps:</span>
                   <span className="font-mono text-danger font-semibold">2 Sectors (S-01, S-02)</span>
+                </div>
+                <div className="flex justify-between text-[11px] text-foreground-subtle border-b border-border/40 pb-1">
+                  <span>Predicted Shortage:</span>
+                  <span className="font-mono text-warning font-semibold">{dashboardSummary?.predictedShortage ?? 22} Volunteers</span>
                 </div>
                 <div className="flex justify-between text-[11px] text-foreground-subtle border-b border-border/40 pb-1">
                   <span>Target Crowd Density Reducer:</span>

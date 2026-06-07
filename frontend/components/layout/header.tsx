@@ -273,6 +273,27 @@ function UserMenu() {
   );
 }
 
+import { registerConnectionListener } from "@/lib/api";
+
+function BackendStatusBadge() {
+  const [connected, setConnected] = React.useState(false);
+
+  useEffect(() => {
+    return registerConnectionListener((isConnected) => {
+      setConnected(isConnected);
+    });
+  }, []);
+
+  return (
+    <div className={cn(
+      "flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border shrink-0",
+      connected ? "bg-success/10 border-success/30 text-success" : "bg-danger/10 border-danger/30 text-danger"
+    )}>
+      {connected ? "🟢 Backend Connected" : "🔴 Offline Demo Mode"}
+    </div>
+  );
+}
+
 /* ============================================================
    Header Export
    ============================================================ */
@@ -296,6 +317,7 @@ export function Header() {
 
       {/* Right cluster */}
       <div className="flex items-center gap-3">
+        <BackendStatusBadge />
         {/* Separator + clock */}
         <div className="hidden lg:block pr-3 border-r border-border">
           <OperationalClock />

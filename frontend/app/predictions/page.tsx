@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AppShell } from "@/components/layout/app-shell";
 import { CommandCard } from "@/components/ui/command-card";
 import { sectorForecasts, predictiveAlerts } from "@/lib/mock-predictions";
+import { fetchPredictions, PredictionsData } from "@/lib/api";
 import {
   TrendingUp,
   Brain,
@@ -22,9 +23,41 @@ import {
 export default function PredictionsPage() {
   const [timeframe, setTimeframe] = useState<"1h" | "3h" | "6h" | "12h">("1h");
 
+  // central integration states
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [isFallback, setIsFallback] = useState(false);
+  const [predictionsData, setPredictionsData] = useState<PredictionsData | null>(null);
+  const [syncTimestamp, setSyncTimestamp] = useState<string | null>(null);
+
+  const loadData = async () => {
+    setIsLoading(true);
+    setIsError(false);
+    try {
+      const result = await fetchPredictions();
+      setPredictionsData(result.data);
+      setSyncTimestamp(new Date(result.data.generatedAt || Date.now()).toLocaleTimeString());
+      setIsFallback(result.isFallback);
+    } catch (err) {
+      setIsError(true);
+      setIsFallback(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const activeForecasts = useMemo(() => {
-    return sectorForecasts[timeframe] || sectorForecasts["1h"];
-  }, [timeframe]);
+    const forecasts = predictionsData?.sectorForecasts || sectorForecasts;
+    return forecasts[timeframe] || forecasts["1h"];
+  }, [predictionsData, timeframe]);
+
+  const activeAlerts = useMemo(() => {
+    return predictionsData?.predictiveAlerts || predictiveAlerts;
+  }, [predictionsData]);
 
   // Compute totals
   const totals = useMemo(() => {
@@ -43,7 +76,7 @@ export default function PredictionsPage() {
       capacity: totalCapacity,
       demand: expectedDemand,
       gap: totalGap,
-      confidence: Math.round(avgConfidence / activeForecasts.length)
+      confidence: activeForecasts.length > 0 ? Math.round(avgConfidence / activeForecasts.length) : 0
     };
   }, [activeForecasts]);
 
@@ -58,6 +91,25 @@ export default function PredictionsPage() {
     return `Operations capacity remains stable within the targeted timeframe. Standard monitoring queues are advised.`;
   }, [activeForecasts, timeframe]);
 
+  if (isLoading) {
+    return (
+      <AppShell pageTitle="Predictive Staffing Engine">
+        <div className="p-6 space-y-6 max-w-[1600px] mx-auto animate-pulse">
+          <div className="h-10 bg-border/60 rounded w-1/4" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-20 bg-card border border-border/50 rounded-lg animate-pulse" />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+            <div className="xl:col-span-8 h-96 bg-card border border-border/50 rounded-lg animate-pulse" />
+            <div className="xl:col-span-4 h-96 bg-card border border-border/50 rounded-lg animate-pulse" />
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell pageTitle="Predictive Staffing Engine">
       <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
@@ -68,9 +120,24 @@ export default function PredictionsPage() {
             <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
               <TrendingUp className="h-6 w-6 text-primary" /> Predictive Staffing Engine
             </h1>
-            <p className="text-sm text-foreground-muted mt-1">
-              Anticipate pilgrim volumes, model crowd density changes, and deploy volunteers proactively before bottlenecks arise.
-            </p>
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <p className="text-sm text-foreground-muted">
+                Anticipate pilgrim volumes, model crowd density changes, and deploy volunteers proactively before bottlenecks arise.
+              </p>
+              {syncTimestamp && (
+                <span className="text-[10px] font-mono bg-success/10 text-success border border-success/30 px-2.5 py-0.5 rounded-full">
+                  Synced: {syncTimestamp}
+                </span>
+              )}
+              {isFallback && (
+                <button
+                  onClick={loadData}
+                  className="text-[10px] font-mono bg-warning/20 text-warning hover:bg-warning/30 border border-warning/30 px-2 py-0.5 rounded-full cursor-pointer transition-all"
+                >
+                  ⚠️ Offline (Click to Retry Sync)
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Timeframe selector slider tabs */}
@@ -208,7 +275,7 @@ export default function PredictionsPage() {
             />
 
             <div className="space-y-3">
-              {predictiveAlerts.map((alert) => (
+              {activeAlerts.map((alert) => (
                 <div
                   key={alert.id}
                   className={`rounded-lg border p-4 space-y-2 relative overflow-hidden bg-card ${

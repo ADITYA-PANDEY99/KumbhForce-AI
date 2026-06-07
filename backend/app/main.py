@@ -30,3 +30,11 @@ def read_root():
         "service": "KumbhForce AI Operations Engine API",
         "version": "1.0.0"
     }
+
+@app.get("/health")
+def read_health():
+    return {
+        "status": "healthy",
+        "service": "KumbhForce AI Operations Engine API",
+        "version": "1.0.0"
+    }
