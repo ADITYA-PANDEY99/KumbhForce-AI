@@ -93,6 +93,13 @@ const navItems: NavItem[] = [
     tooltip: "Auto-generated AI briefings and performance reports for leadership",
     group: "Intelligence",
   },
+  {
+    name: "Pitch Presentation",
+    href: "/slides",
+    icon: FileText,
+    tooltip: "Interactive Dark Aurora presentation slide deck",
+    group: "Intelligence",
+  },
   // Admin group
   {
     name: "Notifications",
